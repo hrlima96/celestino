@@ -1,6 +1,6 @@
 local composer = require( "composer" )
 local physics = require( "physics" )
-local scenarioLoader = require( "core.loaders.scenario_loader" )
+local scenarioLoader = require( "core.loaders.scenarioLoader" )
 local Celestino = require( "core.loaders.celestino" )
 local enemiesLoader = require( "core.loaders.enemies" )
 local jslib = require( "lib.simpleJoystick" )

@@ -26,7 +26,6 @@ trapdoor.loadTrapDoor = function (  )
 	trapdoor.collision = trapDoorCollision.onTrapDoorCollision
 	trapdoor:addEventListener( "collision" )
 	trapdoor.isSensor = true
-	trapdoor.isOpen = false
 
 	return trapdoor
 end
