@@ -1,3 +1,5 @@
+local backgroundCollision = require( "core.collisions.backgroundCollision" )
+
 local background = {}
 
 background.loadBackground = function (  )
@@ -41,25 +43,16 @@ function makeWalls(  )
 	borderGroup:insert(borderRight)
 	borderGroup.isVisible = false
 
-	borderTop.collision = onWallCollision
+	borderTop.collision = backgroundCollision.onWallCollision
 	borderTop:addEventListener( "collision" )
-	borderBottom.collision = onWallCollision
+	borderBottom.collision = backgroundCollision.onWallCollision
 	borderBottom:addEventListener( "collision" )
-	borderRight.collision = onWallCollision
+	borderRight.collision = backgroundCollision.onWallCollision
 	borderRight:addEventListener( "collision" )
-	borderLeft.collision = onWallCollision
+	borderLeft.collision = backgroundCollision.onWallCollision
 	borderLeft:addEventListener( "collision" )
 	
 	return borderGroup
-end
-
-function onWallCollision( self, e )
-	if e.other.myName == "bullet" then
-		e.other:removeSelf()
-		e.other = nil
-	elseif e.other.myName == "celestino" then
-		
-	end
 end
 
 return background

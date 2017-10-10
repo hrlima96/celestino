@@ -1,3 +1,5 @@
+local enemyCollision = require( "core.collisions.enemyCollision" )
+
 local enemies = {}
 
 local file_url = nil
@@ -28,21 +30,10 @@ enemies.loadEnemy = function ( enemyType )
 	enemy:setSequence( "steady" )
 	enemy:play()
 
-	enemy.collision = onEnemyCollision
+	enemy.collision = enemyCollision.onEnemyCollision
 	enemy:addEventListener( "collision" )
 
 	return enemy
-end
-
-function onEnemyCollision( self, e )
-	if e.other.myName == "bullet" then
-		transition.fadeOut( self, { time=200} )
-		self:removeSelf()
-		self = nil
-		e.other:removeSelf()
-		e.other = nil
-		trapdoor.isOpen = true
-	end
 end
 
 return enemies

@@ -1,28 +1,28 @@
-composer = require( "composer" )
-physics = require( "physics" )
-scenarioLoader = require( "core.loaders.scenario_loader" )
-Celestino = require( "core.loaders.celestino" )
-enemiesLoader = require( "core.loaders.enemies" )
-jslib = require( "lib.simpleJoystick" )
+local composer = require( "composer" )
+local physics = require( "physics" )
+local scenarioLoader = require( "core.loaders.scenario_loader" )
+local Celestino = require( "core.loaders.celestino" )
+local enemiesLoader = require( "core.loaders.enemies" )
+local jslib = require( "lib.simpleJoystick" )
+local sharedData = require( "core.data.sharedData" )
 
-scene = composer.newScene()
+
+local scene = composer.newScene()
 physics.start()
 math.randomseed(os.time())
 math.random(); math.random(); math.random()
 
-background = nil
-door = nil
-trapdoor = nil
-jsMove = nil
-jsShoot = nil
-celestino = nil
-gun = "left"
-carcara = nil
+sharedData.levelFinished = false
 
---------------------------------------------
+local background = nil
+local door = nil
+local trapdoor = nil
+local jsMove = nil
+local jsShoot = nil
+local celestino = nil
+local gun = "left"
+local carcara = nil
 
--- forward declarations and other locals
-screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 -- functions
 
 function scene:create( event )
@@ -62,10 +62,9 @@ function scene:show( event )
 		jsShoot:activate()
 	elseif phase == "did" then
 		-- e.g. start timers, begin animation, play audio, etc.
-		
         celestino:play()
-        timer.performWithDelay( 100, move, -1 )
-        timer.performWithDelay( 200, shoot, -1 )
+        sharedData.moveTimer = timer.performWithDelay( 100, move, 0 )
+        sharedData.shootTimer = timer.performWithDelay( 200, shoot, 0 )
 	end
 end
 
@@ -79,6 +78,14 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+		timer.cancel(sharedData.moveTimer)
+		timer.cancel(sharedData.shootTimer)
+		background = nil
+		door = nil
+		trapdoor = nil
+		jsMove = nil
+		jsShoot = nil
+		celestino = nil
 		physics.stop()
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
@@ -94,12 +101,7 @@ function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
 
-	background:removeSelf()
-	door:removeSelf()
-	trapdoor:removeSelf()
-	jsMove:removeSelf()
-	jsShoot:removeSelf()
-	celestino:removeSelf()
+	
 	
 	package.loaded[physics] = nil
 	physics = nil

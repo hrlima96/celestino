@@ -1,3 +1,5 @@
+local trapDoorCollision = require( "core.collisions.trapDoorCollision" )
+
 local trapdoor = {}
 
 local file_url = 'images/alcapao.png'
@@ -21,19 +23,12 @@ trapdoor.loadTrapDoor = function (  )
 
 	trapdoor.myName = "trapdoor"
 	physics.addBody(trapdoor, "static")
-	trapdoor.collision = onTrapDoorCollision
+	trapdoor.collision = trapDoorCollision.onTrapDoorCollision
 	trapdoor:addEventListener( "collision" )
 	trapdoor.isSensor = true
 	trapdoor.isOpen = false
 
 	return trapdoor
-end
-
-function onTrapDoorCollision( self, e )
-	if e.other.myName == "celestino" and self.isOpen then
-		composer.removeScene( "level1" )
-		composer.gotoScene( "level1" )
-	end
 end
 
 return trapdoor
