@@ -6,15 +6,26 @@ local file_url = nil
 local enemyWidth = nil
 local enemyHeight = nil
 
-enemies.loadEnemies = function (  )
-	
-end
-
-enemies.loadEnemy = function ( enemyType )
-	if enemyType == "carcara" then
+enemies.levelEnemies = function ( level, celestinoSide )
+	if level == 1 then
 		file_url = 'images/carcara.png'
 		enemyWidth = 46
 		enemyHeight = 64
+		for i=1, 3 do
+			
+		end
+	elseif level == 2 then
+
+	elseif level == 3 then
+
+	end
+end
+
+enemies.addEnemy = function ( enemyType )
+	if enemyType == "carcara" then
+		file_url = 'images/carcara.png'
+		enemyWidth = 32
+		enemyHeight = 32
 	end
 
 	local enemySheet = graphics.newImageSheet( file_url, {width = enemyWidth, height = enemyHeight, numFrames = 1} )

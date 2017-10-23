@@ -15,13 +15,12 @@ local widget = require "widget"
 -- forward declarations and other locals
 local playBtn
 
--- 'onRelease' event listener for playBtn
-local function onPlayBtnRelease()
-	
-	-- go to level1.lua scene
-	composer.gotoScene( "level1", "fade", 500 )
-	
-	return true	-- indicates successful touch
+function onPlayBtnTouch( event )
+	if event.phase == "ended" then
+		composer.gotoScene( "core.levels.level1", "fade", 700 )
+	end
+
+	return true
 end
 
 function scene:create( event )
@@ -33,31 +32,29 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- display a background image
-	local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
-	background.anchorX = 0
-	background.anchorY = 0
-	background.x, background.y = 0, 0
+	--local background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
+	--background.anchorX = 0
+	--background.anchorY = 0
+	--background.x, background.y = 0, 0
 	
 	-- create/position logo/title image on upper-half of the screen
-	local titleLogo = display.newImageRect( "logo.png", 264, 42 )
-	titleLogo.x = display.contentWidth * 0.5
-	titleLogo.y = 100
-	
-	-- create a widget button (which will loads level1.lua on release)
-	playBtn = widget.newButton{
-		label="Play Now",
-		labelColor = { default={255}, over={128} },
-		default="button.png",
-		over="button-over.png",
-		width=154, height=40,
-		onRelease = onPlayBtnRelease	-- event listener function
-	}
-	playBtn.x = display.contentWidth*0.5
-	playBtn.y = display.contentHeight - 125
+	--local titleLogo = display.newImageRect( "logo.png", 264, 42 )
+	--titleLogo.x = display.contentWidth * 0.5
+	--titleLogo.y = 100
+
+	local background = display.newImageRect( 'images/background_menu.png', display.contentWidth, display.contentHeight )
+	background.x, background.y = display.contentWidth/2, display.contentHeight/2
+
+	local title = display.newImageRect( 'images/celestino_menu.png', display.contentWidth/2 + 100, display.contentHeight/2 )
+	title.x, title.y = display.contentWidth/2, display.contentHeight/2 - 20
+
+	local playBtn = display.newImageRect( 'images/button_menu.png', 75, 40 )
+	playBtn.x, playBtn.y = display.contentWidth/2, display.contentHeight - 70 
+	playBtn:addEventListener( "touch", onPlayBtnTouch )
 	
 	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
-	sceneGroup:insert( titleLogo )
+	sceneGroup:insert( title )
 	sceneGroup:insert( playBtn )
 end
 
@@ -84,6 +81,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -96,11 +94,7 @@ function scene:destroy( event )
 	-- 
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
-	
-	if playBtn then
-		playBtn:removeSelf()	-- widgets must be manually removed
-		playBtn = nil
-	end
+
 end
 
 ---------------------------------------------------------------------------------

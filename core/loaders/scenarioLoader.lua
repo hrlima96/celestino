@@ -6,5 +6,6 @@ local trapDoorLoader = require( "core.loaders.trapdoor" )
 scenarioLoader.loadBackground = backgroundLoader.loadBackground
 scenarioLoader.loadClosedDoor = doorLoader.loadClosedDoor
 scenarioLoader.loadTrapDoor = trapDoorLoader.loadTrapDoor
+scenarioLoader.openTrapDoor = trapDoorLoader.openTrapDoor
 
 return scenarioLoader

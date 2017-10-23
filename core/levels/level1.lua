@@ -1,11 +1,10 @@
 local composer = require( "composer" )
 local physics = require( "physics" )
 local scenarioLoader = require( "core.loaders.scenarioLoader" )
-local Celestino = require( "core.loaders.celestino" )
-local enemiesLoader = require( "core.loaders.enemies" )
+local celestinoEntity = require( "core.entities.celestino" )
+local enemiesEntity = require( "core.entities.enemies" )
 local jslib = require( "lib.simpleJoystick" )
 local sharedData = require( "core.data.sharedData" )
-
 
 local scene = composer.newScene()
 physics.start()
@@ -13,6 +12,7 @@ math.randomseed(os.time())
 math.random(); math.random(); math.random()
 
 sharedData.levelFinished = false
+sharedData.enemies = {}
 
 local background = nil
 local door = nil
@@ -22,6 +22,12 @@ local jsShoot = nil
 local celestino = nil
 local gun = "left"
 local carcara = nil
+local openTrapDoor = nil
+
+local sounds = {
+	walkingSound=audio.loadSound( "audio/andando.mp3" ),
+	shotSound=audio.loadSound( "audio/tiro.wav" )
+}
 
 -- functions
 
@@ -30,6 +36,7 @@ function scene:create( event )
 
 	background = scenarioLoader.loadBackground()
 	trapdoor = scenarioLoader.loadTrapDoor()
+	openTrapDoor = scenarioLoader.openTrapDoor(trapdoor)
 	door = scenarioLoader.loadClosedDoor( trapdoor.side )
 
 	jsMove = jslib.new( 15, 30 )
@@ -43,7 +50,8 @@ function scene:create( event )
     sceneGroup:insert( background )
     sceneGroup:insert( door )
     sceneGroup:insert( trapdoor )
-	sceneGroup:insert( jsMove )
+    sceneGroup:insert( openTrapDoor )
+    sceneGroup:insert( jsMove )
 	sceneGroup:insert( jsShoot )
 end
 
@@ -54,8 +62,9 @@ function scene:show( event )
 	
 	if phase == "will" then
 		-- load celestino and setSequence
-		celestino = Celestino.loadCelestino( door.side )
-		carcara = enemiesLoader.loadEnemy( "carcara" )
+		celestino = celestinoEntity.loadCelestino( door.side )
+		carcara = enemiesEntity.addEnemy( "carcara" )
+		table.insert( sharedData.enemies, 1, carcara )
 		sceneGroup:insert( celestino )
 		sceneGroup:insert( carcara )
 		jsMove:activate()
@@ -65,6 +74,7 @@ function scene:show( event )
         celestino:play()
         sharedData.moveTimer = timer.performWithDelay( 100, move, 0 )
         sharedData.shootTimer = timer.performWithDelay( 200, shoot, 0 )
+        sharedData.enemiesTimer = timer.performWithDelay( 200, enemiesListener, 0 )
 	end
 end
 
@@ -80,13 +90,14 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		timer.cancel(sharedData.moveTimer)
 		timer.cancel(sharedData.shootTimer)
+		timer.cancel(sharedData.enemiesTimer)
 		background = nil
 		door = nil
 		trapdoor = nil
 		jsMove = nil
 		jsShoot = nil
 		celestino = nil
-		physics.stop()
+		openTrapDoor = nil
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -125,6 +136,13 @@ function move( e )
 
 	if jsMove.getDistance() == 0 then
 		celestino:setLinearVelocity(0, 0)
+		audio.pause(1)
+	else
+		if audio.isChannelActive( 1 ) then
+			audio.resume(1)
+		else
+			audio.play(sounds["walkingSound"], {loops=-1, channel=1})
+		end
 	end
 
   	return true
@@ -147,18 +165,27 @@ function shoot( e )
 	end
 
 	if jsShoot:getDistance() ~= 0 then
+		audio.play(sounds["shotSound"], {loops=0, channel=2})
 		if gun == "left" then
-			leftGun = Celestino.getCelestinoGunLeft(celestino.x, celestino.y, celestino.sequence)
-			Celestino.shoot(leftGun.x, leftGun.y, celestino.sequence)
+			leftGun = celestino.getCelestinoGunLeft(celestino.x, celestino.y, celestino.sequence)
+			celestino.shoot(leftGun.x, leftGun.y, celestino.sequence)
 			gun = "right"
 		else
-			rightGun = Celestino.getCelestinoGunRight(celestino.x, celestino.y, celestino.sequence)
-			Celestino.shoot(rightGun.x, rightGun.y, celestino.sequence)
+			rightGun = celestino.getCelestinoGunRight(celestino.x, celestino.y, celestino.sequence)
+			celestino.shoot(rightGun.x, rightGun.y, celestino.sequence)
 			gun = "left"
 		end
 	end
 
   	return true
+end
+
+function enemiesListener( e )
+	if table.getn(sharedData.enemies) == 0 then
+		sharedData.levelFinished = true
+		trapdoor.alpha = 0
+		openTrapDoor.alpha = 1
+	end
 end
 
 ---------------------------------------------------------------------------------
