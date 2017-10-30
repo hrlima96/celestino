@@ -66,16 +66,16 @@ celestino.loadCelestino = function ( doorSide )
 	}
 	local celestino = display.newSprite(heroSheet, sequenceData)
 	if doorSide == 1 then -- top
-		celestino.x, celestino.y = display.contentWidth/2, 50
+		celestino.x, celestino.y = display.contentWidth/2, 25
 		celestino:setSequence( "down" )
 	elseif doorSide == 2 then -- right
-		celestino.x, celestino.y = display.contentWidth - 50, display.contentHeight/2
+		celestino.x, celestino.y = display.contentWidth - 25, display.contentHeight/2
 		celestino:setSequence( "left" )
 	elseif doorSide == 3 then -- down
-		celestino.x, celestino.y = display.contentWidth/2, display.contentHeight - 50
+		celestino.x, celestino.y = display.contentWidth/2, display.contentHeight - 25
 		celestino:setSequence( "up" )
 	elseif doorSide == 4 then -- left
-		celestino.x, celestino.y = 50, display.contentHeight/2
+		celestino.x, celestino.y = 25, display.contentHeight/2
 		celestino:setSequence( "right" )
 	end
 

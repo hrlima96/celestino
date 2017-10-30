@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local physics = require( "physics" )
 local scenarioLoader = require( "core.loaders.scenarioLoader" )
+local statsLoader = require( "core.loaders.statsLoader" )
 local celestinoEntity = require( "core.entities.celestino" )
 local enemiesEntity = require( "core.entities.enemies" )
 local jslib = require( "lib.simpleJoystick" )
@@ -10,7 +11,17 @@ local scene = composer.newScene()
 physics.start()
 math.randomseed(os.time())
 math.random(); math.random(); math.random()
+system.activate("multitouch")
 
+if sharedData.lives == nil then
+	sharedData.lives = 3
+end
+if sharedData.points == nil then
+	sharedData.points = 0
+end
+if sharedData.level == nil then
+	sharedData.level = 1
+end
 sharedData.levelFinished = false
 sharedData.enemies = {}
 
@@ -39,6 +50,10 @@ function scene:create( event )
 	openTrapDoor = scenarioLoader.openTrapDoor(trapdoor)
 	door = scenarioLoader.loadClosedDoor( trapdoor.side )
 
+	sharedData.livesObject = statsLoader.loadLives()
+	sharedData.pointsObject = statsLoader.loadPoints()
+
+
 	jsMove = jslib.new( 15, 30 )
 	jsMove.x = 35
     jsMove.y = display.contentHeight - 35
@@ -48,6 +63,7 @@ function scene:create( event )
     jsShoot.y = display.contentHeight - 35
 
     sceneGroup:insert( background )
+    sceneGroup:insert( sharedData.pointsObject )
     sceneGroup:insert( door )
     sceneGroup:insert( trapdoor )
     sceneGroup:insert( openTrapDoor )
@@ -63,10 +79,11 @@ function scene:show( event )
 	if phase == "will" then
 		-- load celestino and setSequence
 		celestino = celestinoEntity.loadCelestino( door.side )
-		carcara = enemiesEntity.addEnemy( "carcara" )
-		table.insert( sharedData.enemies, 1, carcara )
+		sharedData.enemies = enemiesEntity.levelEnemies( sharedData.level, door.side )
+		for i=1,table.getn(sharedData.enemies) do
+			sceneGroup:insert(sharedData.enemies[i])
+		end
 		sceneGroup:insert( celestino )
-		sceneGroup:insert( carcara )
 		jsMove:activate()
 		jsShoot:activate()
 	elseif phase == "did" then
