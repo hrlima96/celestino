@@ -45,6 +45,19 @@ local sounds = {
 function scene:create( event )
 	local sceneGroup = self.view
 
+	if sharedData.lives == nil then
+	sharedData.lives = 3
+	end
+	if sharedData.points == nil then
+		sharedData.points = 0
+	end
+	if sharedData.level == nil then
+		sharedData.level = 1
+	end
+
+	sharedData.levelFinished = false
+	sharedData.enemies = {}
+
 	background = scenarioLoader.loadBackground()
 	trapdoor = scenarioLoader.loadTrapDoor()
 	openTrapDoor = scenarioLoader.openTrapDoor(trapdoor)

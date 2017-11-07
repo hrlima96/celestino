@@ -17,7 +17,7 @@ local playBtn
 
 function onPlayBtnTouch( event )
 	if event.phase == "ended" then
-		composer.gotoScene( "core.levels.level1", "fade", 700 )
+		composer.gotoScene( "core.levels.level1", "fade", 500 )
 	end
 
 	return true

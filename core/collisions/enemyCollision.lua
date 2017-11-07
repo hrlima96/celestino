@@ -16,10 +16,11 @@ enemyCollision.onEnemyCollision = function ( self, e )
 		e.other:removeSelf()
 		e.other = nil
 	elseif e.other.myName == "celestino" then
-		e.other:setFillColor(1, 0, 0, 0.4)
-		sharedData.livesObject[sharedData.lives]:setFillColor(1,1,1,0)
-		sharedData.livesObject[sharedData.lives]:removeSelf()
-		sharedData.livesObject[sharedData.lives] = nil
+		if sharedData.livesObject[sharedData.lives] then
+			sharedData.livesObject[sharedData.lives]:setFillColor(1,1,1,0)
+			sharedData.livesObject[sharedData.lives]:removeSelf()
+			sharedData.livesObject[sharedData.lives] = nil
+		end
 		sharedData.lives = sharedData.lives - 1
 		if sharedData.lives <= 0 then
 			composer.removeScene( "core.levels.level1" )

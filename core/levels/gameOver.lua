@@ -8,6 +8,14 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 
 
+function onBackBtnTouch( event )
+	if event.phase == "ended" then
+		composer.removeScene( "core.levels.gameOver" )
+		composer.gotoScene( "core.levels.menu", "fade", 500 )
+	end
+
+	return true
+end
 --------------------------------------------
 
 function scene:create( event )
@@ -31,9 +39,16 @@ function scene:create( event )
 
 	local background = display.newImageRect( 'images/background_menu.png', display.contentWidth, display.contentHeight )
 	background.x, background.y = display.contentWidth/2, display.contentHeight/2
-	
-	-- all display objects must be inserted into group
 	sceneGroup:insert( background )
+
+	local gameOverText = display.newText( {parent=sceneGroup, text="Está Morto", x=display.contentWidth/2, y=display.contentHeight/2, fontSize=50} )
+	gameOverText:setFillColor(0)
+
+	local backText = display.newText( {parent=sceneGroup, text="voltar", x=display.contentWidth/2, y=display.contentHeight/2 + 50, fontSize=18} )
+	backText:setFillColor(0)
+	backText:addEventListener( "touch", onBackBtnTouch )
+
+
 end
 
 function scene:show( event )
