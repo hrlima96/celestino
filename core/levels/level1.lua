@@ -214,6 +214,11 @@ function enemiesListener( e )
 		trapdoor.alpha = 0
 		openTrapDoor.alpha = 1
 	end
+	if sharedData.points >= 1000 then
+		sharedData.level = 2
+	elseif sharedData.points >= 2000 then
+		sharedData.level = 3
+	end
 end
 
 ---------------------------------------------------------------------------------

@@ -9,32 +9,23 @@ local enemyHeight = nil
 enemies.levelEnemies = function ( level, celestinoSide )
 	local enemies = display.newGroup()
 	if level == 1 then
-		file_url = 'images/carcara.png'
-		enemyWidth = 32
-		enemyHeight = 32
-		for i=1, 3 do
-			enemies:insert( addEnemy( "carcara", celestinoSide ))
+		for i=1, 2 do
+			enemies:insert( addEnemy( enemyName, celestinoSide ))
 		end
 	elseif level == 2 then
-		file_url = 'images/carcara.png'
-		enemyWidth = 32
-		enemyHeight = 32
-		for i=1, 6 do
-			enemies:insert( addEnemy( "carcara", celestinoSide ))
+		for i=1, 4 do
+			enemies:insert( addEnemy( enemyName, celestinoSide ))
 		end
 	elseif level == 3 then
-		file_url = 'images/carcara.png'
-		enemyWidth = 32
-		enemyHeight = 32
-		for i=1, 10 do
-			enemies:insert( addEnemy( "carcara", celestinoSide ))
+		for i=1, 6 do
+			enemies:insert( addEnemy( enemyName, celestinoSide ))
 		end
 	end
 
 	return enemies
 end
 
-function addEnemy ( enemyType, celestinoSide )
+function addEnemy ( celestinoSide )
 	local gridCellWidth, gridCellHeight = display.contentWidth / 5, display.contentHeight / 3
 	local cantCreateX, cantCreateY = -1, -1
 	if celestinoSide == 1 then -- top
@@ -58,11 +49,17 @@ function addEnemy ( enemyType, celestinoSide )
 	end
 	enemyX, enemyY = (gridCellWidth * createPlaceX) - 32, (gridCellHeight * createPlaceY) - 50 
 
-	if enemyType == "carcara" then
-		file_url = 'images/carcara.png'
-		enemyWidth = 32
-		enemyHeight = 32
+	local enemy = math.random(2)
+	local enemyName = ''
+	if enemy == 1 then
+		enemyName = 'carcara'
+	else 
+		enemyName = 'peba'	
 	end
+	file_url = 'images/' .. enemyName .. '.png'
+	enemyWidth = 32
+	enemyHeight = 32
+	
 
 	local enemySheet = graphics.newImageSheet( file_url, {width = enemyWidth, height = enemyHeight, numFrames = 1} )
 	local sequenceData = {
@@ -73,7 +70,7 @@ function addEnemy ( enemyType, celestinoSide )
 
 	physics.addBody( enemy, "static", { density = 3.0 } )
 	enemy.gravityScale = 0
-	enemy.myName = enemyType
+	enemy.myName = enemyName
 	enemy:setSequence( "steady" )
 	enemy:play()
 
