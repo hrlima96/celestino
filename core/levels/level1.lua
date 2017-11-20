@@ -23,8 +23,8 @@ if sharedData.level == nil then
 	sharedData.level = 1
 end
 sharedData.levelFinished = false
-sharedData.enemies = {}
 
+local enemies = {}
 local background = nil
 local door = nil
 local trapdoor = nil
@@ -45,18 +45,8 @@ local sounds = {
 function scene:create( event )
 	local sceneGroup = self.view
 
-	if sharedData.lives == nil then
-	sharedData.lives = 3
-	end
-	if sharedData.points == nil then
-		sharedData.points = 0
-	end
-	if sharedData.level == nil then
-		sharedData.level = 1
-	end
-
 	sharedData.levelFinished = false
-	sharedData.enemies = {}
+	enemies = {}
 
 	background = scenarioLoader.loadBackground()
 	trapdoor = scenarioLoader.loadTrapDoor()
@@ -77,6 +67,7 @@ function scene:create( event )
 
     sceneGroup:insert( background )
     sceneGroup:insert( sharedData.pointsObject )
+    sceneGroup:insert( sharedData.livesObject )
     sceneGroup:insert( door )
     sceneGroup:insert( trapdoor )
     sceneGroup:insert( openTrapDoor )
@@ -92,10 +83,8 @@ function scene:show( event )
 	if phase == "will" then
 		-- load celestino and setSequence
 		celestino = celestinoEntity.loadCelestino( door.side )
-		sharedData.enemies = enemiesEntity.levelEnemies( sharedData.level, door.side )
-		for i=1,table.getn(sharedData.enemies) do
-			sceneGroup:insert(sharedData.enemies[i])
-		end
+		enemies = enemiesEntity.levelEnemies( sharedData.level, door.side )
+		sceneGroup:insert( enemies )
 		sceneGroup:insert( celestino )
 		jsMove:activate()
 		jsShoot:activate()
@@ -118,16 +107,11 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
-		timer.cancel(sharedData.moveTimer)
-		timer.cancel(sharedData.shootTimer)
-		timer.cancel(sharedData.enemiesTimer)
-		background = nil
-		door = nil
-		trapdoor = nil
-		jsMove = nil
-		jsShoot = nil
-		celestino = nil
-		openTrapDoor = nil
+		timer.pause(sharedData.moveTimer)
+		timer.pause(sharedData.shootTimer)
+		timer.pause(sharedData.enemiesTimer)
+		audio.pause(1)
+		audio.pause(2)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -142,7 +126,21 @@ function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
 
-	
+	timer.cancel(sharedData.moveTimer)
+	timer.cancel(sharedData.shootTimer)
+	timer.cancel(sharedData.enemiesTimer)
+
+	enemies:removeSelf()
+	enemies = nil
+	background = nil
+	door = nil
+	trapdoor = nil
+	jsMove = nil
+	jsShoot = nil
+	celestino = nil
+	openTrapDoor = nil
+	audio.stop(1)
+	audio.stop(2)
 	
 	package.loaded[physics] = nil
 	physics = nil
@@ -211,7 +209,7 @@ function shoot( e )
 end
 
 function enemiesListener( e )
-	if table.getn(sharedData.enemies) == 0 then
+	if enemies.numChildren == 0 then
 		sharedData.levelFinished = true
 		trapdoor.alpha = 0
 		openTrapDoor.alpha = 1

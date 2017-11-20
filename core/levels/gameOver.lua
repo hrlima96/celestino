@@ -5,13 +5,14 @@
 -----------------------------------------------------------------------------------------
 
 local composer = require( "composer" )
+local sharedData = require( "core.data.sharedData" )
 local scene = composer.newScene()
 
 
 function onBackBtnTouch( event )
 	if event.phase == "ended" then
 		composer.removeScene( "core.levels.gameOver" )
-		composer.gotoScene( "core.levels.menu", "fade", 500 )
+		composer.gotoScene( "core.levels.level1", "fade", 500 )
 	end
 
 	return true
@@ -41,12 +42,14 @@ function scene:create( event )
 	background.x, background.y = display.contentWidth/2, display.contentHeight/2
 	sceneGroup:insert( background )
 
-	local gameOverText = display.newText( {parent=sceneGroup, text="Está Morto", x=display.contentWidth/2, y=display.contentHeight/2, fontSize=50} )
-	gameOverText:setFillColor(0)
+	local gameOverText = display.newImageRect( 'images/game-over.png', display.contentWidth, display.contentHeight )
+	gameOverText.x, gameOverText.y = display.contentWidth/2, display.contentHeight/2
+	sceneGroup:insert( gameOverText )
 
-	local backText = display.newText( {parent=sceneGroup, text="voltar", x=display.contentWidth/2, y=display.contentHeight/2 + 50, fontSize=18} )
-	backText:setFillColor(0)
-	backText:addEventListener( "touch", onBackBtnTouch )
+	local backButton = display.newImageRect( 'images/jogar-de-novo.png', 175, 40 )
+	backButton.x, backButton.y = display.contentWidth / 2, display.contentHeight / 2 + 80
+	backButton:addEventListener( "touch", onBackBtnTouch )
+	sceneGroup:insert( backButton )
 
 
 end
@@ -62,6 +65,9 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
+		sharedData.points = 0
+		sharedData.lives = 3
+		sharedData.level = 1
 	end	
 end
 
@@ -74,6 +80,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+	
 
 	elseif phase == "did" then
 		-- Called when the scene is now off screen

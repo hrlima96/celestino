@@ -7,27 +7,27 @@ local enemyWidth = nil
 local enemyHeight = nil
 
 enemies.levelEnemies = function ( level, celestinoSide )
-	local enemies = {}
+	local enemies = display.newGroup()
 	if level == 1 then
 		file_url = 'images/carcara.png'
 		enemyWidth = 32
 		enemyHeight = 32
 		for i=1, 3 do
-			table.insert(enemies, addEnemy( "carcara", celestinoSide ))
+			enemies:insert( addEnemy( "carcara", celestinoSide ))
 		end
 	elseif level == 2 then
 		file_url = 'images/carcara.png'
 		enemyWidth = 32
 		enemyHeight = 32
 		for i=1, 6 do
-			table.insert(enemies, addEnemy( "carcara", celestinoSide ))
+			enemies:insert( addEnemy( "carcara", celestinoSide ))
 		end
 	elseif level == 3 then
 		file_url = 'images/carcara.png'
 		enemyWidth = 32
 		enemyHeight = 32
 		for i=1, 10 do
-			table.insert(enemies, addEnemy( "carcara", celestinoSide ))
+			enemies:insert( addEnemy( "carcara", celestinoSide ))
 		end
 	end
 

@@ -82,6 +82,7 @@ celestino.loadCelestino = function ( doorSide )
 	physics.addBody( celestino, "dynamic", { density = 3.0 } )
 	celestino.gravityScale = 0
 	celestino.myName = "celestino"
+	celestino.isFixedRotation = true
 
 	celestino.getCelestinoGunRight = getCelestinoGunRight
 	celestino.getCelestinoGunLeft = getCelestinoGunLeft
